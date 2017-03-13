@@ -65,7 +65,8 @@ basic linear algebra and random number generation.
 %setup -q -n %{pname}-%{version}
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
+# numpy-intelfcomp.patch does not apply anymore, building on intel is probably broken now
+#%patch3 -p1
 
 %build
 # OpenHPC compiler/mpi designation
