@@ -84,7 +84,7 @@
             exit $rtn_codek
 
 - project:
-    name: <name_of_your_project_in_cico>
+    name: sig-hpc
     jobs:
         - '{ci_project}-{git_repo}':
             git_username: adrianreber
