@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 if [ ! -e components/OHPC_macros ]; then
 	echo -n "This script expects to be started in the top-level OpenHPC git"
 	echo " checkout directory."
