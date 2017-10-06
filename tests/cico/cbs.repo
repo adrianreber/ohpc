@@ -1,0 +1,3 @@
+[cbs]
+name=CBS OHPC
+baseurl=https://cbs.centos.org/repos/hpc7-openhpc-13-candidate/x86_64/os/
