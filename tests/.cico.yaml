@@ -68,7 +68,8 @@
             # Checkout the pull request that we received from the githubPRB plugin
             git rebase --preserve-merges origin/${{ghprbTargetBranch}} \
             && rsync -e "ssh $sshopts" -Ha $(pwd)/ $CICO_hostname:payload \
-            && /usr/bin/timeout {timeout} $ssh_cmd -t "cd payload && {ci_cmd}"
+            && /usr/bin/timeout {timeout} $ssh_cmd -t "cd payload && {ci_cmd} \
+            ${{ghprbTargetBranch}} ${{ghprbSourceBranch}} three"
             rtn_code=$?
             if [ $rtn_code -eq 0 ]; then
                 cico node done $CICO_ssid
@@ -81,7 +82,7 @@
                     curl "http://admin.ci.centos.org:8080/Node/fail?key=$CICO_API_KEY&ssid=$CICO_ssid"
                 fi
             fi
-            exit $rtn_codek
+            exit $rtn_code
 
 - project:
     name: sig-hpc
@@ -90,5 +91,5 @@
             git_username: adrianreber
             git_repo: ohpc
             ci_project: '{name}'
-            ci_cmd: "cd tests && .cico-run-tests.sh"
+            ci_cmd: "cd tests && ./.cico-run-tests.sh"
             timeout: '120m'
