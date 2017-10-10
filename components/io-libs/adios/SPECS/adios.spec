@@ -8,6 +8,8 @@
 #
 #----------------------------------------------------------------------------eh-
 
+# test
+
 # Build that is dependent on compiler/mpi toolchains
 %define ohpc_compiler_dependent 1
 %define ohpc_mpi_dependent 1
