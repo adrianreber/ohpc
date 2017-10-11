@@ -37,6 +37,9 @@ for file in `git diff-tree --no-commit-id --name-only -r origin/${1}..origin/${2
 		fi
 		SRPM=` echo ${SRPM} | tail -1 | awk -F\  ' { print $2 } ' `
 		yum-builddep --nogpgcheck -y ${SRPM}
+		if [ -e /etc/profile.d/lmod.sh ]; then
+			. /etc/profile.d/lmod.sh
+		fi
 		sudo -u ohpc rpm -i ${SRPM}
 		sudo -u ohpc rpmbuild -ba /home/ohpc/rpmbuild/SPECS/${SPEC}
 		RESULT=$?
