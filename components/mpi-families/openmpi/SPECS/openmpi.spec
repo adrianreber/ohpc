@@ -8,6 +8,8 @@
 #
 #----------------------------------------------------------------------------eh-
 
+# test
+
 # OpenMPI stack that is dependent on compiler toolchain
 %define ohpc_compiler_dependent 1
 %include %{_sourcedir}/OHPC_macros

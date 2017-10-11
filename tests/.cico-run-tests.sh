@@ -16,6 +16,8 @@ cp cico/cbs.repo /etc/yum.repos.d/cbs.repo
 chown ohpc.ohpc -R /root/payload
 chmod 755 /root
 
+LOG=`mktemp`
+
 FAILED=0
 
 # List all files in this PR
@@ -32,17 +34,21 @@ for file in `git diff-tree --no-commit-id --name-only -r origin/${1}..origin/${2
 		RESULT=$?
 		if [ "${RESULT}" == "1" ]; then
 			echo "Building SRPM for ${file} failed."
+			echo "Building SRPM for ${file} failed." >> ${LOG}
 			FAILED=1
 			continue
 		fi
 		SRPM=` echo ${SRPM} | tail -1 | awk -F\  ' { print $2 } ' `
 		yum-builddep --nogpgcheck -y ${SRPM}
 		sudo -u ohpc rpm -i ${SRPM}
-		sudo -u ohpc rpmbuild -ba /home/ohpc/rpmbuild/SPECS/${SPEC}
+		sudo -u ohpc -i rpmbuild -ba /home/ohpc/rpmbuild/SPECS/${SPEC}
 		RESULT=$?
 		if [ "${RESULT}" == "1" ]; then
 			echo "Building binary RPM for ${file} failed."
+			echo "Building binary RPM for ${file} failed." >> ${LOG}
 			FAILED=1
+		else
+			echo "Building binary RPM for ${file} succeeded." >> ${LOG}
 		fi
 		popd
 	fi
@@ -51,6 +57,8 @@ done
 if [ "${FAILED}" == "1" ]; then
 	echo "Something failed. Please look at the logs."
 fi
+
+cat ${LOG}
 
 exit ${FAILED}
 
