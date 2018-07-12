@@ -29,6 +29,8 @@ Group:   %{PROJ_NAME}/io-libs
 Url:     http://www.olcf.ornl.gov/center-projects/adios/
 Source0: http://users.nccs.gov/~pnorbert/adios-%{version}.tar.gz
 AutoReq: no
+BuildRoot: /tmp
+Source999: some.file
 
 BuildRequires: zlib-devel glib2-devel
 Requires:      zlib zlib-devel
