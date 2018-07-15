@@ -2,7 +2,12 @@ sudo: required
 language: c
 env:
   - TEST=check_spec
+  - TEST=rebuild_srpm
 services:
   - docker
+before_install:
+  - make -C tests/travis
 script:
-  - sudo docker build -t ohpc.${TEST} -f tests/travis/Dockerfile.${TEST} --build-arg TRAVIS_COMMIT_RANGE=$TRAVIS_COMMIT_RANGE .
+  - sudo docker build -t ohpc.${TEST} -f tests/travis/Dockerfile.${TEST} --build-arg TRAVIS_COMMIT_RANGE=$TRAVIS_COMMIT_RANGE --build-arg TRAVIS_BRANCH=$TRAVIS_BRANCH .
+after_script:
+  - make -C tests/travis clean
