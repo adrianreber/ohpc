@@ -25,7 +25,7 @@ Name:      %{pname}%{PROJ_DELIM}
 Version:   %{gnu_version}
 Release:   1%{?dist}
 License:   GNU GPL
-Group:     %{PROJ_NAME}/compiler-familie
+Group:     %{PROJ_NAME}/compiler-families
 URL:       http://gcc.gnu.org/
 Source0:   https://ftp.gnu.org/gnu/gcc/gcc-%{gnu_version}/gcc-%{gnu_version}.tar.xz
 Source1:   https://ftp.gnu.org/gnu/gmp/gmp-%{gmp_version}.tar.bz2
