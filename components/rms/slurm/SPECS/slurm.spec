@@ -26,7 +26,7 @@ Summary:	Slurm Workload Manager
 
 
 
-Group:		%{PROJ_NAME}/rmss
+Group:		%{PROJ_NAME}/rm
 License:	GPLv2+
 URL:		https://slurm.schedmd.com/
 
