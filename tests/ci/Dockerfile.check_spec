@@ -10,4 +10,4 @@ RUN yum install -y git ${PYTHON_BINARY}
 COPY . /ohpc
 WORKDIR /ohpc
 
-RUN ${PYTHON_BINARY} tests/travis/check_spec.py ${COMMIT_RANGE}
+RUN ${PYTHON_BINARY} tests/ci/check_spec.py ${COMMIT_RANGE}
