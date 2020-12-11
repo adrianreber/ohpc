@@ -24,6 +24,8 @@ Version:	20.02.5
 Release:	%{rel}%{?dist}
 Summary:	Slurm Workload Manager
 
+
+
 Group:		%{PROJ_NAME}/rms
 License:	GPLv2+
 URL:		https://slurm.schedmd.com/
