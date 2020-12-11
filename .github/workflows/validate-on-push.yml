@@ -14,4 +14,4 @@ jobs:
     - uses: actions/checkout@v2
     - name: Validate Changes
       run: >
-        docker build -t ohpc.${{ matrix.target }} -f tests/ci/Dockerfile.${{ matrix.target }} --build-arg RANGE="${{ github.event.base_ref }}..${{ github.event.before }}" .
+        docker build -t ohpc.${{ matrix.target }} -f tests/ci/Dockerfile.${{ matrix.target }} --build-arg COMMIT_RANGE="${{ github.event.base_ref }}..${{ github.event.before }}" .
