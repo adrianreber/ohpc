@@ -51,6 +51,7 @@ Requires:      openblas-%{compiler_family}%{PROJ_DELIM}
 %global install_path %{OHPC_LIBS}/%{compiler_family}/%{pname}%{OHPC_CUSTOM_PKG_DELIM}/%version
 %global module_path %{OHPC_MODULEDEPS}/%{compiler_family}/%{pname}
 
+
 %description
 PLASMA is a software package for solving problems in dense linear algebra
 using OpenMP. PLASMA provides implementations of state-of-the-art
