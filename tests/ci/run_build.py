@@ -115,7 +115,14 @@ def build_srpm_and_rpm(command, family=None):
         stderr=subprocess.PIPE,
     )
     if result.returncode != 0:
-        logging.info("Running 'rpmbuild --rebuild' failed with %s" % result)
+        logging.info(
+            "Running 'rpmbuild --rebuild' failed with stderr: %s" %
+            result.stderr.decode('utf-8')
+        )
+        logging.info(
+            "Running 'rpmbuild --rebuild' failed with stdout: %s" %
+            result.stdout.decode('utf-8')
+        )
         return False
 
     logging.info(result.stdout.decode('utf-8'))
@@ -128,6 +135,26 @@ for spec in sys.argv[1:]:
         continue
     spec_found = True
     logging.info("\n--> Building RPM from spec file %s" % spec)
+
+    # Change 'Release:'
+    command = [
+        'sed',
+        '-e',
+        's,Release:.*$,Release: 99999,g;',
+        '-i',
+        spec,
+    ]
+
+    logging.info("About to run command %s" % ' '.join(command))
+    result = subprocess.run(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if result.returncode != 0:
+        logging.error("Running sed failed with %s" % result)
+        error = True
+        continue
 
     just_spec = os.path.basename(spec)
 

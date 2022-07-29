@@ -11,9 +11,15 @@ fi
 check_rms
 rm=$RESOURCE_MANAGER
 
-NODES=2
-TASKS=8
-ARGS=8
+if [ -z "$GITHUB_ACTIONS" ]; then
+    NODES=2
+    TASKS=8
+    ARGS=8
+else
+    NODES=2
+    TASKS=2
+    ARGS=2
+fi
 
 TIMEOUT="00:05:00"
 
@@ -21,7 +27,7 @@ TIMEOUT="00:05:00"
     if [ ! -s C_test ];then
 	flunk "C_test binary does not exist"
     fi
-    
+
     run run_serial_binary -t ${TIMEOUT} ./C_test
     assert_success
 }

@@ -11,15 +11,21 @@ fi
 check_rms
 RMS=$RESOURCE_MANAGER
 
-NODES=2
-TASKS=8
-ARGS=8
+if [ -z "$GITHUB_ACTIONS" ]; then
+    NODES=2
+    TASKS=8
+    ARGS=8
+else
+    NODES=2
+    TASKS=2
+    ARGS=2
+fi
 
 @test "[MPI] C   binary runs on two nodes under resource manager ($RMS/$LMOD_FAMILY_COMPILER/$LMOD_FAMILY_MPI)" {
     if [ ! -s C_test ];then
 	flunk "C_test binary does not exist"
     fi
-    
+
     run run_mpi_binary ./C_test $ARGS $NODES $TASKS
     assert_success
 }
