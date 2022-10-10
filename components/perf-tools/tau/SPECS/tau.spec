@@ -44,10 +44,10 @@ BuildRequires: libgomp1
 BuildRequires: libgomp
 %endif
 
-BuildRequires: curl
+BuildRequires: curl which make
 BuildRequires: postgresql-devel binutils-devel
 Requires: binutils-devel
-BuildRequires: zlib-devel python2-devel
+BuildRequires: zlib-devel python3-devel
 Requires:      lmod%{PROJ_DELIM} >= 7.6.1
 BuildRequires: pdtoolkit-%{compiler_family}%{PROJ_DELIM}
 %ifarch x86_64
@@ -165,11 +165,12 @@ for file in \
 	tools/src/tau_portal/bin/tau_portal.py \
 	tools/src/tau_prof_to_json.py \
 	tools/src/tau_baseline; do
-		sed -e "s,/env python,/env python2,g" -i $file;
+		sed -e "s,/env python,/env python3,g" -i $file;
 done
 
 # Fix using the right compiler
 sed -e "s,/usr/bin/g++,g++,g" -i utils/include/Makefile.skel
+sed -e "s,/usr/bin/gcc,gcc,g" -i utils/include/Makefile.skel
 
 # Try and figure out architecture
 detectarch=unknown
