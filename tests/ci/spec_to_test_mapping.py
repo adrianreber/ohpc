@@ -38,6 +38,10 @@ test_map = {
         'scotch',
         'zlib-devel'
     ],
+    'components/io-libs/adios/SPECS/adios.spec': [
+        'adios',
+        'openmpi4-gnu12-ohpc mpich-gnu12-ohpc'
+    ],
 }
 
 
