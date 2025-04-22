@@ -18,13 +18,13 @@
 
 Summary:   A general purpose library and file format for storing scientific data
 Name:      p%{pname}-%{compiler_family}-%{mpi_family}%{PROJ_DELIM}
-Version:   1.14.0
+Version:   1.14.6
 Release:   1%{?dist}
 License:   Hierarchical Data Format (HDF) Software Library and Utilities License
 Group:     %{PROJ_NAME}/io-libs
 URL:       http://www.hdfgroup.org/HDF5
 
-Source0:   https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/%{pname}-%{version}/src/%{pname}-%{version}.tar.bz2
+Source0:   https://github.com/HDFGroup/%{pname}/archive/refs/tags/%{pname}_%{version}.tar.gz
 
 BuildRequires: zlib-devel make
 BuildRequires: perl(File::Compare)
@@ -49,7 +49,7 @@ structure, such as images, arrays of vectors, and structured and unstructured
 grids. You can also mix and match them in HDF5 files according to your needs.
 
 %prep
-%setup -q -n %{pname}-%{version}
+%setup -q -n %{pname}-%{pname}_%{version}
 
 %build
 # override with newer config.guess for aarch64
@@ -78,6 +78,12 @@ export MPICXX=mpicxx
 # the files from gfortran 11.1.0.
 export FCFLAGS="-I $MPI_DIR/include/mpi/gfortran/11.1.0 $FCFLAGS"
 export FCFLAGS="$FCFLAGS -Wno-array-temporaries"
+# The current configure script resets all flags if it finds the
+# string "Intel" in the output of the fortran compiler.
+# As we are using the "Intel" MPI it will find the string
+# but not because it is an Intel compiler. Fortunately
+# it is possible to set compiler flags via I_MPI_FCFLAGS.
+export I_MPI_FCFLAGS="$FCFLAGS"
 export CFLAGS="$CFLAGS -Wno-redundant-decls"
 %endif
 
@@ -94,8 +100,8 @@ autoreconf -if
 sed -e 's/NO_SYMBOLS_CFLAGS="-Wl,-s"/NO_SYMBOLS_CFLAGS=/g' -i config/intel-flags
 sed -e 's/NO_SYMBOLS_CFLAGS="-Wl,-s"/NO_SYMBOLS_CFLAGS=/g' -i config/intel-cxxflags
 # delete special flags no longer available
-echo "" > config/intel-warnings/18
-sed '/-Wp64/d' -i config/intel-warnings/15
+echo "" > config/intel-warnings/classic/18
+sed '/-Wp64/d' -i config/intel-warnings/classic/15
 %endif
 
 ./configure --prefix=%{install_path} \
