@@ -260,6 +260,10 @@ jobs:
     runs-on: ubuntu-latest
     name: AlmaLinux 10 ${{ matrix.provisioner }} Slurm Integration
     needs: build_on_rhel
+    # The job provisions VMs and can wait on them, so without a limit it
+    # inherits the six hour default and a hung boot has to be cancelled by
+    # hand. The run itself takes 10 to 16 minutes.
+    timeout-minutes: 60
     steps:
     - uses: actions/checkout@v7
     - uses: actions/download-artifact@v8
@@ -300,8 +304,14 @@ jobs:
         sudo podman exec -it -l
         -e INTEGRATION_TESTS="${{ steps.check_integration.outputs.tests }}"
         bash -c "cd /home/ohpc; bash tests/ci/integration-test.sh -p ${{ matrix.provisioner }}"
+    # Opens an interactive session and holds the runner until someone
+    # connects and exits, so it must not fire on an ordinary failure: a
+    # two minute package mirror hiccup otherwise occupies a runner for
+    # hours. Add the ci-debug label to the pull request and re-run the job
+    # when you want it.
     - name: Debug via SSH
-      if: failure()
+      if: failure() && contains(github.event.pull_request.labels.*.name, 'ci-debug')
+      timeout-minutes: 30
       uses: mxschmitt/action-tmate@v3
       with:
         limit-access-to-actor: true
