@@ -42,3 +42,37 @@ ochami -k cloud-init group get raw compute \
 ```
 <!-- ohpc_end -->
 
+Finally, confirm that the cloud-init server resolves each compute node by its
+IP address. This is the lookup the node itself performs at boot, and the only
+check here that has to run after node discovery.
+
+The server answers `/cloud-init/meta-data` from an in-memory map of SMD's
+Ethernet interfaces that it refreshes on a timer, so a node registered a moment
+ago is not visible to it yet. A node that boots into that window gets no
+cloud-init data at all, which means no root SSH key and no munge key, and it
+never becomes reachable. Wait for the lookup to succeed before powering the
+nodes on.
+
+The request below is the one the node will send. `X-Forwarded-For` carries the
+node's address so that the server resolves the same entry; haproxy appends its
+own entry to the header and the server reads the first.
+
+<!-- ohpc_begin -->
+<!-- ohpc_comment Verify the cloud-init server resolves each compute node -->
+```bash
+for ((i=0; i<num_computes; i++)); do
+	for ((t=0; ; t++)) ; do
+		curl -fsS -o /dev/null \
+			-H "X-Forwarded-For: ${c_ip[$i]}" \
+			"http://${sms_ip}:8081/cloud-init/meta-data" && break
+		(( t < 18 )) || {
+			echo "cloud-init node: FAILED for ${c_name[$i]}"
+			exit 1
+		}
+		echo "Waiting for cloud-init to resolve ${c_name[$i]}..."
+		sleep 5
+	done
+done
+echo "cloud-init node: OK"
+```
+<!-- ohpc_end -->
