@@ -53,18 +53,24 @@ cloud-init data at all, which means no root SSH key and no munge key, and it
 never becomes reachable. Wait for the lookup to succeed before powering the
 nodes on.
 
-The request below is the one the node will send. `X-Forwarded-For` carries the
-node's address so that the server resolves the same entry; haproxy appends its
-own entry to the header and the server reads the first.
+The check below asks the cloud-init server the question the node will ask, with
+`X-Forwarded-For` carrying the node's address so that the server resolves the
+same entry. It asks the server's container directly rather than through
+haproxy, because haproxy replaces `X-Forwarded-For` with the address the
+request came from, so through it the server would look up the head node
+instead. The node's own request through haproxy is tested when it boots.
 
 <!-- ohpc_begin -->
 <!-- ohpc_comment Verify the cloud-init server resolves each compute node -->
 ```bash
+cloud_init_ip=$(podman inspect --format \
+	'{%raw%}{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}{%endraw%}' \
+	cloud-init-server)
 for ((i=0; i<num_computes; i++)); do
 	for ((t=0; ; t++)) ; do
 		curl -fsS -o /dev/null \
 			-H "X-Forwarded-For: ${c_ip[$i]}" \
-			"http://${sms_ip}:8081/cloud-init/meta-data" && break
+			"http://${cloud_init_ip}:27777/meta-data" && break
 		(( t < 18 )) || {
 			echo "cloud-init node: FAILED for ${c_name[$i]}"
 			exit 1

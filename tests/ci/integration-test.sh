@@ -462,12 +462,16 @@ dump_diagnostics() {
 	# The cloud-init server resolves a node by the source address of its
 	# request, which haproxy passes on in X-Forwarded-For. Ask it the same
 	# question each compute node asks, so a 422 here names the node the
-	# server cannot resolve.
+	# server cannot resolve. Ask the server directly: haproxy replaces
+	# X-Forwarded-For with the address the request came from.
+	cloud_init_ip=$(podman inspect --format \
+		'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+		cloud-init-server 2>/dev/null) || true
 	for ((i = 0; i < num_computes; i++)); do
 		echo "=== cloud-init meta-data as ${c_name[${i}]} ==="
 		curl -sS -o /dev/null -w '%{http_code}\n' \
 			-H "X-Forwarded-For: ${c_ip[${i}]}" \
-			"http://${sms_ip:-192.168.100.1}:8081/cloud-init/meta-data" ||
+			"http://${cloud_init_ip}:27777/meta-data" ||
 			true
 	done
 
