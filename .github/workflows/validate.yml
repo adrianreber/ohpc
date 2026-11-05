@@ -7,10 +7,17 @@ on:
   pull_request:
     branches:
       - 4.x
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Open an interactive SSH (tmate) session if a job fails'
+        type: boolean
+        default: false
 
 permissions:
   actions: write
   contents: read
+  pull-requests: read
 
 env:
   SKIP_CI_SPECS: |
@@ -307,10 +314,10 @@ jobs:
     # Opens an interactive session and holds the runner until someone
     # connects and exits, so it must not fire on an ordinary failure: a
     # two minute package mirror hiccup otherwise occupies a runner for
-    # hours. Add the ci-debug label to the pull request and re-run the job
-    # when you want it.
+    # hours. Re-run the workflow by hand (Actions, Run workflow) with
+    # "Open an interactive SSH session" ticked when you want to debug.
     - name: Debug via SSH
-      if: failure() && contains(github.event.pull_request.labels.*.name, 'ci-debug')
+      if: failure() && inputs.debug_enabled
       timeout-minutes: 30
       uses: mxschmitt/action-tmate@v3
       with:
