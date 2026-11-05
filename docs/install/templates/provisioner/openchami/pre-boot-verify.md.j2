@@ -29,7 +29,7 @@ ochami -k cloud-init defaults get \
 ```
 <!-- ohpc_end -->
 
-Finally, confirm that the compute group cloud-init configuration is present.
+Next, confirm that the compute group cloud-init configuration is present.
 This is what delivers the SSH keys and munge key to the node at boot:
 
 <!-- ohpc_begin -->
@@ -68,7 +68,7 @@ cloud_init_ip=$(podman inspect --format \
 	cloud-init-server)
 for ((i=0; i<num_computes; i++)); do
 	for ((t=0; ; t++)) ; do
-		curl -fsS -o /dev/null \
+		curl -fsS -m 5 -o /dev/null \
 			-H "X-Forwarded-For: ${c_ip[$i]}" \
 			"http://${cloud_init_ip}:27777/meta-data" && break
 		(( t < 18 )) || {

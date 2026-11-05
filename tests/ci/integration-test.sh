@@ -469,7 +469,7 @@ dump_diagnostics() {
 		cloud-init-server 2>/dev/null) || true
 	for ((i = 0; i < num_computes; i++)); do
 		echo "=== cloud-init meta-data as ${c_name[${i}]} ==="
-		curl -sS -o /dev/null -w '%{http_code}\n' \
+		curl -sS -m 5 -o /dev/null -w '%{http_code}\n' \
 			-H "X-Forwarded-For: ${c_ip[${i}]}" \
 			"http://${cloud_init_ip}:27777/meta-data" ||
 			true
